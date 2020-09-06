@@ -5,12 +5,10 @@
 pkgname=go-carbon
 pkgver=0.15.0
 pkgrel=1
-# _commit_short=$(git rev-parse --short HEAD)
-_commit_short=30a250f
 # _commit_epoch=$(git show -s --format=%ct)
 _commit_epoch=1594580105
 pkgdesc='Golang implementation of Graphite/Carbon server with classic architecture: Agent -> Cache -> Persister'
-arch=(i686 x86_64 armv6 armv7 aarch64)
+arch=(i686 x86_64 armv6h armv7h aarch64)
 url='http://github.com/go-graphite/go-carbon'
 license=('MIT')
 makedepends=('go>=1.12')
@@ -64,7 +62,7 @@ build() {
 		CGO_LDFLAGS="${LDFLAGS}" \
 		go build \
 			-buildmode=pie -mod=readonly -modcacherw -trimpath \
-			-ldflags "-X main.version=$pkgver -X main.commit=$_commit_short -X main.buildstamp=$_commit_epoch -buildid="  \
+			-ldflags "-X main.BuildVersion=v$pkgver -X main.BuildStamp=$_commit_epoch -buildid= -s -w"  \
 			github.com/go-graphite/go-carbon
 	touch -c -d @${_commit_epoch} go-carbon
 }

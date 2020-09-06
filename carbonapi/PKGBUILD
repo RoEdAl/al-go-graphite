@@ -5,12 +5,10 @@
 pkgname=carbonapi
 pkgver=0.14.1
 pkgrel=1
-# _commit_short=$(git rev-parse --short HEAD)
-_commit_short=8f89b67b
 # _commit_epoch=$(git show -s --format=%ct)
 _commit_epoch=1597837806
 pkgdesc='CarbonAPI - replacement for graphite-web written in Go'
-arch=(i686 x86_64 armv6 armv7 aarch64)
+arch=(i686 x86_64 armv6h armv7h aarch64)
 url='http://github.com/go-graphite/carbonapi'
 license=('MIT')
 depends=('cairo')
@@ -62,7 +60,7 @@ build() {
 		CGO_LDFLAGS="${LDFLAGS}" \
 		go build \
 			-buildmode=pie -mod=readonly -modcacherw -trimpath  -tags cairo \
-			-ldflags "-X main.version=$pkgver -X main.commit=$_commit_short -X main.buildstamp=$_commit_epoch -buildid="  \
+			-ldflags "-X main.BuildVersion=v$pkgver -X main.BuildStamp=$_commit_epoch -buildid= -s -w"  \
 			github.com/go-graphite/carbonapi/cmd/carbonapi
 	touch -c -d @${_commit_epoch} carbonapi
 }
