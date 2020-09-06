@@ -1,0 +1,20 @@
+[Unit]
+Description=CarbonAPI - replacement for graphite-web written in Go
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/go-carbon -config /etc/carbonapi.yaml
+ExecReload=/bin/kill -USR2 $MAINPID
+User=carbon
+RuntimeDirectory=carbondirectory
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+
+[Install]
+WantedBy=multi-user.target

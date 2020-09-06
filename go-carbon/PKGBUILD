@@ -1,0 +1,91 @@
+# Maintainer: Edmunt Pienkowsky <roed@onet.eu>
+
+# Based on: https://aur.archlinux.org/packages/go-carbon
+
+pkgname=go-carbon
+pkgver=0.15.0
+pkgrel=1
+# _commit_short=$(git rev-parse --short HEAD)
+_commit_short=30a250f
+# _commit_epoch=$(git show -s --format=%ct)
+_commit_epoch=1594580105
+pkgdesc='Golang implementation of Graphite/Carbon server with classic architecture: Agent -> Cache -> Persister'
+arch=(i686 x86_64 armv6 armv7 aarch64)
+url='http://github.com/go-graphite/go-carbon'
+license=('MIT')
+makedepends=('go>=1.12')
+backup=(
+	"etc/${pkgname}/${pkgname}.conf"
+	"etc/${pkgname}/storage-aggregation.conf"
+	"etc/${pkgname}/storage-schemas.conf"
+)
+source=(
+	"${pkgname}-${pkgver}.tar.gz::http://github.com/go-graphite/go-carbon/archive/v${pkgver}.tar.gz"
+	'sysusers.conf'
+	"${pkgname}.service"
+)
+noextract=("${pkgname}-${pkgver}.tar.gz")
+sha256sums=('af500da34394bc1c9c905373b5e1204db13644bbe72f1855f9155cdff0796f0b'
+            '7f0e7ddaaa1da41d03b26882cba812d8879f38530d3bda197675039cef10c8b4'
+            '08b03429f2cf89106532b956efea2f7d23e6a8380023a5d4deac5da36cd56f0f')
+
+prepare() {
+	msg2 'Cache setup'
+	local GOCACHE="$srcdir/cache/go"
+	local GOTMP="$srcdir/tmp/go"
+	mkdir -p "$GOCACHE"
+	mkdir -p "$GOTMP"
+
+	msg2 'GOPATH setup'
+	local GOPATH="$srcdir/gopath"
+	mkdir -p "$GOPATH/src/github.com/go-graphite"
+
+	msg2 'Extracting sources'
+	bsdtar -xf "$srcdir/$pkgname-$pkgver.tar.gz" -C "$GOPATH/src/github.com/go-graphite"
+	mv "$GOPATH/src/github.com/go-graphite/$pkgname-$pkgver" "$GOPATH/src/github.com/go-graphite/$pkgname"
+}
+
+build() {
+	local GOCACHE="$srcdir/tmp/cache"
+	local GOTMP="$srcdir/tmp/go"
+	local GOPATH="$srcdir/gopath"
+
+	cd "$GOPATH/src/github.com/go-graphite/$pkgname"
+	env \
+		TMPDIR="$GOTMP" \
+		GOCACHE="$GOCACHE" \
+		GOPATH="$GOPATH" \
+		GOTMPDIR="$GOTMP" \
+		GOROOT_FINAL=/usr/lib/go \
+		SOURCE_DATE_EPOCH=$_commit_epoch \
+		CGO_CPPFLAGS="${CPPFLAGS}" \
+		CGO_CFLAGS="${CFLAGS}" \
+		CGO_CXXFLAGS="${CXXFLAGS}" \
+		CGO_LDFLAGS="${LDFLAGS}" \
+		go build \
+			-buildmode=pie -mod=readonly -modcacherw -trimpath \
+			-ldflags "-X main.version=$pkgver -X main.commit=$_commit_short -X main.buildstamp=$_commit_epoch -buildid="  \
+			github.com/go-graphite/go-carbon
+	touch -c -d @${_commit_epoch} go-carbon
+}
+
+package() {
+	local GOPATH="$srcdir/gopath"
+
+	install -dm755 ${pkgdir}/usr/lib/sysusers.d
+	install -m644 ${srcdir}/sysusers.conf ${pkgdir}/usr/lib/sysusers.d/${pkgname}.conf
+	touch -c -d @${_commit_epoch} ${pkgdir}/usr/lib/sysusers.d/${pkgname}.conf
+
+	install -dm755 ${pkgdir}/usr/lib/systemd/system
+	install -m644 ${srcdir}/${pkgname}.service ${pkgdir}/usr/lib/systemd/system/${pkgname}.service
+	touch -c -d @${_commit_epoch} ${pkgdir}/usr/lib/systemd/system/${pkgname}.service
+
+	cd $GOPATH/src/github.com/go-graphite/${pkgname}
+
+	install -dm755 ${pkgdir}/usr/bin
+	install -pDm0755 ${pkgname} "${pkgdir}/usr/bin/${pkgname}"
+
+	install -dm755 ${pkgdir}/etc/${pkgname}
+	install -m644 deploy/{go-carbon.conf,storage-aggregation.conf,storage-schemas.conf} "${pkgdir}/etc/${pkgname}"
+	touch -c -d @${_commit_epoch} "${pkgdir}/etc/${pkgname}/{go-carbon.conf,storage-aggregation.conf,storage-schemas.conf}"
+}

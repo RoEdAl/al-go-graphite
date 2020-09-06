@@ -1,0 +1,85 @@
+# Maintainer: Edmunt Pienkowsky <roed@onet.eu>
+
+# Based on: https://aur.archlinux.org/packages/go-carbon
+
+pkgname=carbonapi
+pkgver=0.14.1
+pkgrel=1
+# _commit_short=$(git rev-parse --short HEAD)
+_commit_short=8f89b67b
+# _commit_epoch=$(git show -s --format=%ct)
+_commit_epoch=1597837806
+pkgdesc='CarbonAPI - replacement for graphite-web written in Go'
+arch=(i686 x86_64 armv6 armv7 aarch64)
+url='http://github.com/go-graphite/carbonapi'
+license=('MIT')
+depends=('cairo')
+optdepends=('go-carbon')
+makedepends=('go>=1.12')
+backup=(
+	"etc/${pkgname}.yaml"
+)
+source=(
+	"${pkgname}-${pkgver}.tar.gz::http://github.com/go-graphite/carbonapi/archive/${pkgver}.tar.gz"
+	"${pkgname}.service"
+)
+noextract=("${pkgname}-${pkgver}.tar.gz")
+sha256sums=('5f33a3aa8c9f8edfce8a26b358b6edf8c455f4156cf25e2a2399712d67282379'
+            '6ff8a63406d898aa4029ef38123dc2915649ce19f662872188b36c4e7c9c7d33')
+
+prepare() {
+	msg2 'Cache setup'
+	local GOCACHE="$srcdir/cache/go"
+	local GOTMP="$srcdir/tmp/go"
+	mkdir -p "$GOCACHE"
+	mkdir -p "$GOTMP"
+
+	msg2 'GOPATH setup'
+	local GOPATH="$srcdir/gopath"
+	mkdir -p "$GOPATH/src/github.com/go-graphite"
+
+	msg2 'Extracting sources'
+	bsdtar -xf "$srcdir/$pkgname-$pkgver.tar.gz" -C "$GOPATH/src/github.com/go-graphite"
+	mv "$GOPATH/src/github.com/go-graphite/$pkgname-$pkgver" "$GOPATH/src/github.com/go-graphite/$pkgname"
+}
+
+build() {
+	local GOCACHE="$srcdir/tmp/cache"
+	local GOTMP="$srcdir/tmp/go"
+	local GOPATH="$srcdir/gopath"
+
+	cd "$GOPATH/src/github.com/go-graphite/carbonapi"
+	env \
+		TMPDIR="$GOTMP" \
+		GOCACHE="$GOCACHE" \
+		GOPATH="$GOPATH" \
+		GOTMPDIR="$GOTMP" \
+		GOROOT_FINAL=/usr/lib/go \
+		SOURCE_DATE_EPOCH=$_commit_epoch \
+		CGO_CPPFLAGS="${CPPFLAGS}" \
+		CGO_CFLAGS="${CFLAGS}" \
+		CGO_CXXFLAGS="${CXXFLAGS}" \
+		CGO_LDFLAGS="${LDFLAGS}" \
+		go build \
+			-buildmode=pie -mod=readonly -modcacherw -trimpath  -tags cairo \
+			-ldflags "-X main.version=$pkgver -X main.commit=$_commit_short -X main.buildstamp=$_commit_epoch -buildid="  \
+			github.com/go-graphite/carbonapi/cmd/carbonapi
+	touch -c -d @${_commit_epoch} carbonapi
+}
+
+package() {
+	local GOPATH="$srcdir/gopath"
+
+	install -dm755 ${pkgdir}/usr/lib/systemd/system
+	install -m644 ${srcdir}/${pkgname}.service ${pkgdir}/usr/lib/systemd/system/${pkgname}.service
+	touch -c -d @${_commit_epoch} ${pkgdir}/usr/lib/systemd/system/${pkgname}.service
+
+	cd $GOPATH/src/github.com/go-graphite/${pkgname}
+
+	install -dm755 ${pkgdir}/usr/bin
+	install -pDm0755 ${pkgname} "${pkgdir}/usr/bin/${pkgname}"
+
+	install -dm755 ${pkgdir}/etc
+	install -m644 cmd/${pkgname}/${pkgname}.example.yaml "${pkgdir}/etc/${pkgname}.yaml"
+	touch -c -d @${_commit_epoch} "${pkgdir}/etc/${pkgname}.yaml"
+}
