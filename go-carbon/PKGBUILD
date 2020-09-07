@@ -5,8 +5,6 @@
 pkgname=go-carbon
 pkgver=0.15.0
 pkgrel=1
-# _commit_epoch=$(git show -s --format=%ct)
-_commit_epoch=1594580105
 pkgdesc='Golang implementation of Graphite/Carbon server with classic architecture: Agent -> Cache -> Persister'
 arch=(i686 x86_64 armv6h armv7h aarch64)
 url='http://github.com/go-graphite/go-carbon'
@@ -55,16 +53,14 @@ build() {
 		GOPATH="$GOPATH" \
 		GOTMPDIR="$GOTMP" \
 		GOROOT_FINAL=/usr/lib/go \
-		SOURCE_DATE_EPOCH=$_commit_epoch \
 		CGO_CPPFLAGS="${CPPFLAGS}" \
 		CGO_CFLAGS="${CFLAGS}" \
 		CGO_CXXFLAGS="${CXXFLAGS}" \
 		CGO_LDFLAGS="${LDFLAGS}" \
 		go build \
 			-buildmode=pie -mod=readonly -modcacherw -trimpath \
-			-ldflags "-X main.BuildVersion=v$pkgver -X main.BuildStamp=$_commit_epoch -s -w"  \
+			-ldflags "-X main.BuildVersion=v$pkgver -s -w"  \
 			github.com/go-graphite/go-carbon
-	touch -c -d @${_commit_epoch} go-carbon
 }
 
 package() {
@@ -72,18 +68,15 @@ package() {
 
 	install -dm755 ${pkgdir}/usr/lib/sysusers.d
 	install -m644 ${srcdir}/sysusers.conf ${pkgdir}/usr/lib/sysusers.d/${pkgname}.conf
-	touch -c -d @${_commit_epoch} ${pkgdir}/usr/lib/sysusers.d/${pkgname}.conf
 
 	install -dm755 ${pkgdir}/usr/lib/systemd/system
 	install -m644 ${srcdir}/${pkgname}.service ${pkgdir}/usr/lib/systemd/system/${pkgname}.service
-	touch -c -d @${_commit_epoch} ${pkgdir}/usr/lib/systemd/system/${pkgname}.service
 
 	cd $GOPATH/src/github.com/go-graphite/${pkgname}
 
 	install -dm755 ${pkgdir}/usr/bin
-	install -pDm0755 ${pkgname} "${pkgdir}/usr/bin/${pkgname}"
+	install -Dm0755 ${pkgname} "${pkgdir}/usr/bin/${pkgname}"
 
 	install -dm755 ${pkgdir}/etc/${pkgname}
 	install -m644 deploy/{go-carbon.conf,storage-aggregation.conf,storage-schemas.conf} "${pkgdir}/etc/${pkgname}"
-	touch -c -d @${_commit_epoch} "${pkgdir}/etc/${pkgname}/{go-carbon.conf,storage-aggregation.conf,storage-schemas.conf}"
 }

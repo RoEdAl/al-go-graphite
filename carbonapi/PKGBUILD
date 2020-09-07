@@ -1,12 +1,10 @@
 # Maintainer: Edmunt Pienkowsky <roed@onet.eu>
 
-# Based on: https://aur.archlinux.org/packages/go-carbon
+# Based on: https://aur.archlinux.org/packages/carbonapi
 
 pkgname=carbonapi
 pkgver=0.14.1
 pkgrel=1
-# _commit_epoch=$(git show -s --format=%ct)
-_commit_epoch=1597837806
 pkgdesc='CarbonAPI - replacement for graphite-web written in Go'
 arch=(i686 x86_64 armv6h armv7h aarch64)
 url='http://github.com/go-graphite/carbonapi'
@@ -53,16 +51,14 @@ build() {
 		GOPATH="$GOPATH" \
 		GOTMPDIR="$GOTMP" \
 		GOROOT_FINAL=/usr/lib/go \
-		SOURCE_DATE_EPOCH=$_commit_epoch \
 		CGO_CPPFLAGS="${CPPFLAGS}" \
 		CGO_CFLAGS="${CFLAGS}" \
 		CGO_CXXFLAGS="${CXXFLAGS}" \
 		CGO_LDFLAGS="${LDFLAGS}" \
 		go build \
 			-buildmode=pie -mod=readonly -modcacherw -trimpath  -tags cairo \
-			-ldflags "-X main.BuildVersion=v$pkgver -X main.BuildStamp=$_commit_epoch -s -w"  \
+			-ldflags "-X main.BuildVersion=v$pkgver -s -w"  \
 			github.com/go-graphite/carbonapi/cmd/carbonapi
-	touch -c -d @${_commit_epoch} carbonapi
 }
 
 package() {
@@ -70,14 +66,12 @@ package() {
 
 	install -dm755 ${pkgdir}/usr/lib/systemd/system
 	install -m644 ${srcdir}/${pkgname}.service ${pkgdir}/usr/lib/systemd/system/${pkgname}.service
-	touch -c -d @${_commit_epoch} ${pkgdir}/usr/lib/systemd/system/${pkgname}.service
 
 	cd $GOPATH/src/github.com/go-graphite/${pkgname}
 
 	install -dm755 ${pkgdir}/usr/bin
-	install -pDm0755 ${pkgname} "${pkgdir}/usr/bin/${pkgname}"
+	install -Dm0755 ${pkgname} "${pkgdir}/usr/bin/${pkgname}"
 
 	install -dm755 ${pkgdir}/etc
 	install -m644 cmd/${pkgname}/${pkgname}.example.yaml "${pkgdir}/etc/${pkgname}.yaml"
-	touch -c -d @${_commit_epoch} "${pkgdir}/etc/${pkgname}.yaml"
 }
