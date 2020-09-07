@@ -11,7 +11,7 @@ pkgdesc='Golang implementation of Graphite/Carbon server with classic architectu
 arch=(i686 x86_64 armv6h armv7h aarch64)
 url='http://github.com/go-graphite/go-carbon'
 license=('MIT')
-makedepends=('go>=1.12')
+makedepends=('go>=1.13.4')
 backup=(
 	"etc/${pkgname}/${pkgname}.conf"
 	"etc/${pkgname}/storage-aggregation.conf"
@@ -62,7 +62,7 @@ build() {
 		CGO_LDFLAGS="${LDFLAGS}" \
 		go build \
 			-buildmode=pie -mod=readonly -modcacherw -trimpath \
-			-ldflags "-X main.BuildVersion=v$pkgver -X main.BuildStamp=$_commit_epoch -buildid= -s -w"  \
+			-ldflags "-X main.BuildVersion=v$pkgver -X main.BuildStamp=$_commit_epoch -s -w"  \
 			github.com/go-graphite/go-carbon
 	touch -c -d @${_commit_epoch} go-carbon
 }

@@ -13,7 +13,7 @@ url='http://github.com/go-graphite/carbonapi'
 license=('MIT')
 depends=('cairo')
 optdepends=('go-carbon')
-makedepends=('go>=1.12')
+makedepends=('go>=1.13.4')
 backup=(
 	"etc/${pkgname}.yaml"
 )
@@ -60,7 +60,7 @@ build() {
 		CGO_LDFLAGS="${LDFLAGS}" \
 		go build \
 			-buildmode=pie -mod=readonly -modcacherw -trimpath  -tags cairo \
-			-ldflags "-X main.BuildVersion=v$pkgver -X main.BuildStamp=$_commit_epoch -buildid= -s -w"  \
+			-ldflags "-X main.BuildVersion=v$pkgver -X main.BuildStamp=$_commit_epoch -s -w"  \
 			github.com/go-graphite/carbonapi/cmd/carbonapi
 	touch -c -d @${_commit_epoch} carbonapi
 }
