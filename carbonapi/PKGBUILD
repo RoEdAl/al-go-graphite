@@ -56,7 +56,7 @@ build() {
 		CGO_CXXFLAGS="${CXXFLAGS}" \
 		CGO_LDFLAGS="${LDFLAGS}" \
 		go build \
-			-buildmode=pie -mod=readonly -modcacherw -trimpath  -tags cairo \
+			-buildmode=pie -mod=readonly -modcacherw -trimpath \
 			-ldflags "-X main.BuildVersion=v$pkgver -s -w"  \
 			github.com/go-graphite/carbonapi/cmd/carbonapi
 }
