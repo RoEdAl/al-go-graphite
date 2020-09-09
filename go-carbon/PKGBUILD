@@ -17,13 +17,15 @@ backup=(
 )
 source=(
 	"${pkgname}-${pkgver}.tar.gz::http://github.com/go-graphite/go-carbon/archive/v${pkgver}.tar.gz"
+	"${pkgname}.conf"
 	'sysusers.conf'
 	"${pkgname}.service"
 )
 noextract=("${pkgname}-${pkgver}.tar.gz")
 sha256sums=('af500da34394bc1c9c905373b5e1204db13644bbe72f1855f9155cdff0796f0b'
+            '5f6fa7310be217c0b27ee947c6dc4603b25c5391cbfad49480240228157cdc17'
             '7f0e7ddaaa1da41d03b26882cba812d8879f38530d3bda197675039cef10c8b4'
-            '08b03429f2cf89106532b956efea2f7d23e6a8380023a5d4deac5da36cd56f0f')
+            'a1dacf400628936b09ee86360f5452cf1e14e4a2391af3d7a0a192a7444dbbd2')
 
 prepare() {
 	msg2 'Cache setup'
@@ -78,5 +80,11 @@ package() {
 	install -Dm0755 ${pkgname} "${pkgdir}/usr/bin/${pkgname}"
 
 	install -dm755 ${pkgdir}/etc/${pkgname}
-	install -m644 deploy/{go-carbon.conf,storage-aggregation.conf,storage-schemas.conf} "${pkgdir}/etc/${pkgname}"
+	install -m644 deploy/{storage-aggregation.conf,storage-schemas.conf} "${pkgdir}/etc/${pkgname}"
+	# install minimal configuration file
+	install -m644 ${srcdir}/${pkgname}.conf "${pkgdir}/etc/${pkgname}/${pkgname}.conf"
+
+	# store original configuration file with comments
+	install -dm755 ${pkgdir}/usr/share/${pkgname}
+	install -m644 deploy/go-carbon.conf "${pkgdir}/usr/share/${pkgname}/${pkgname}.conf"
 }

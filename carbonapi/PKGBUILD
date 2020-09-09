@@ -9,7 +9,6 @@ pkgdesc='CarbonAPI - replacement for graphite-web written in Go'
 arch=(i686 x86_64 armv6h armv7h aarch64)
 url='http://github.com/go-graphite/carbonapi'
 license=('MIT')
-depends=('cairo')
 optdepends=('go-carbon')
 makedepends=('go>=1.13.4')
 backup=(
@@ -17,11 +16,13 @@ backup=(
 )
 source=(
 	"${pkgname}-${pkgver}.tar.gz::http://github.com/go-graphite/carbonapi/archive/${pkgver}.tar.gz"
+	"${pkgname}.yaml"
 	"${pkgname}.service"
 )
 noextract=("${pkgname}-${pkgver}.tar.gz")
 sha256sums=('5f33a3aa8c9f8edfce8a26b358b6edf8c455f4156cf25e2a2399712d67282379'
-            '6ff8a63406d898aa4029ef38123dc2915649ce19f662872188b36c4e7c9c7d33')
+            'cf8cc2155938bfb3bc0532796a3211dbe357284f247224be97820db1b425871c'
+            '22900a057e89b8b36d0af307299439b3c5aa3cdd9ec42efa14cbc2c79140f3e6')
 
 prepare() {
 	msg2 'Cache setup'
@@ -72,6 +73,11 @@ package() {
 	install -dm755 ${pkgdir}/usr/bin
 	install -Dm0755 ${pkgname} "${pkgdir}/usr/bin/${pkgname}"
 
+	# installing minimal configuration file
 	install -dm755 ${pkgdir}/etc
-	install -m644 cmd/${pkgname}/${pkgname}.example.yaml "${pkgdir}/etc/${pkgname}.yaml"
+	install -m644 ${srcdir}/${pkgname}.yaml "${pkgdir}/etc/${pkgname}.yaml"
+
+	# store original configuration file with comments
+	install -dm755 ${pkgdir}/usr/share/${pkgname}
+	install -m644 cmd/${pkgname}/${pkgname}.example.yaml "${pkgdir}/usr/share/${pkgname}/${pkgname}.yaml"
 }

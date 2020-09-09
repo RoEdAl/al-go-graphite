@@ -9,10 +9,9 @@ ExecStart=/usr/bin/go-carbon -config /etc/go-carbon/go-carbon.conf
 ExecReload=/bin/kill -USR2 $MAINPID
 
 User=carbon
-RuntimeDirectory=go-carbon
-StateDirectory=graphite
-LogsDirectory=go-carbon
-ConfigurationDirectory=go-carbon
+RuntimeDirectory=%N
+StateDirectory=%N %N/whisper
+ConfigurationDirectory=%N
 
 NoNewPrivileges=true
 ProtectSystem=strict

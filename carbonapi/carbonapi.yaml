@@ -1,0 +1,32 @@
+#
+# CarbonAPI minimalistic configuration file
+#
+# Full configuration file with comments - /usr/share/carbonapi/carbonapi.yaml
+#
+
+listen: "[::1]:50505"
+prefix: ""
+notFoundStatusCode: 200
+concurency: 2
+cache:
+   type: "null"
+maxBatchSize: 10
+graphite:
+    host: ""
+idleConnections: 1
+upstreams:
+    keepAliveInterval: "3m0s"
+    backendsv2:
+        backends:
+          -
+            groupName: "group1"
+            protocol: "carbonapi_v2_pb"
+            lbMethod: "roundrobin"
+            maxTries: 2
+            servers:
+                - "http://[::1]:45708"
+logger:
+    - logger: ""
+      file: ""
+      level: "panic"
+      encoding: "console"

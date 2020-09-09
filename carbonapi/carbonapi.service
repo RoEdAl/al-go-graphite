@@ -4,10 +4,12 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/go-carbon -config /etc/carbonapi.yaml
+ExecStart=/usr/bin/carbonapi -config /etc/carbonapi.yaml
 ExecReload=/bin/kill -USR2 $MAINPID
 User=carbon
-RuntimeDirectory=carbondirectory
+
+RuntimeDirectory=%N
+
 NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=true
