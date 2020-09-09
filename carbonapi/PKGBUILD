@@ -21,7 +21,7 @@ source=(
 )
 noextract=("${pkgname}-${pkgver}.tar.gz")
 sha256sums=('5f33a3aa8c9f8edfce8a26b358b6edf8c455f4156cf25e2a2399712d67282379'
-            'cf8cc2155938bfb3bc0532796a3211dbe357284f247224be97820db1b425871c'
+            '8a87c1016f1ff427e1e0fc8f58162e5e768554750f7265d03d99bc859da4bf0d'
             '22900a057e89b8b36d0af307299439b3c5aa3cdd9ec42efa14cbc2c79140f3e6')
 
 prepare() {

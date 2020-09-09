@@ -6,11 +6,16 @@
 
 listen: "[::1]:50505"
 prefix: ""
-notFoundStatusCode: 200
-concurency: 2
+expvar:
+  enabled: false
+concurency: 10
 cache:
    type: "null"
+backendCache:
+   type: "null"
 maxBatchSize: 10
+httpResponseStackTrace: false
+tz: "UTC,0"
 graphite:
     host: ""
 idleConnections: 1
@@ -19,10 +24,10 @@ upstreams:
     backendsv2:
         backends:
           -
-            groupName: "group1"
+            groupName: "simple"
             protocol: "carbonapi_v2_pb"
             lbMethod: "roundrobin"
-            maxTries: 2
+            maxTries: 1
             servers:
                 - "http://[::1]:45708"
 logger:
