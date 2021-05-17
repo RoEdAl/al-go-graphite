@@ -3,7 +3,7 @@
 # Based on: https://aur.archlinux.org/packages/go-carbon
 
 pkgname=go-carbon
-pkgver=0.15.5
+pkgver=0.15.6
 pkgrel=1
 pkgdesc='Golang implementation of Graphite/Carbon server with classic architecture: Agent -> Cache -> Persister'
 arch=(i686 x86_64 armv6h armv7h aarch64)
@@ -22,7 +22,7 @@ source=(
 	"${pkgname}.service"
 )
 noextract=("${pkgname}-${pkgver}.tar.gz")
-sha256sums=('22115d733caf7ba8551a78b4aae7b9af22ff9b7fd8fb798b28b067688d7b0e3c'
+sha256sums=('411c132cc70b981a44283268f9ece9a00d684253fcdefc282272609d68beea4e'
             '04c6c4a213e3184a4657eabc804937f881b6af21e2972f1bdcca36d0c6285e3c'
             '7f0e7ddaaa1da41d03b26882cba812d8879f38530d3bda197675039cef10c8b4'
             'a1dacf400628936b09ee86360f5452cf1e14e4a2391af3d7a0a192a7444dbbd2')
