@@ -3,7 +3,7 @@
 # Based on: https://aur.archlinux.org/packages/go-carbon
 
 pkgname=go-carbon
-pkgver=0.15.6
+pkgver=0.16.2
 pkgrel=1
 pkgdesc='Golang implementation of Graphite/Carbon server with classic architecture: Agent -> Cache -> Persister'
 arch=(i686 x86_64 armv6h armv7h aarch64)
@@ -22,7 +22,7 @@ source=(
 	"${pkgname}.service"
 )
 noextract=("${pkgname}-${pkgver}.tar.gz")
-sha256sums=('411c132cc70b981a44283268f9ece9a00d684253fcdefc282272609d68beea4e'
+sha256sums=('05e464a7171a82da68bb8b1fa0b54cd9bd4f1613b061f83a97a07c3ba3f03242'
             '04c6c4a213e3184a4657eabc804937f881b6af21e2972f1bdcca36d0c6285e3c'
             '7f0e7ddaaa1da41d03b26882cba812d8879f38530d3bda197675039cef10c8b4'
             'a1dacf400628936b09ee86360f5452cf1e14e4a2391af3d7a0a192a7444dbbd2')
@@ -85,5 +85,5 @@ package() {
 
 	# store original configuration file with comments
 	install -dm755 ${pkgdir}/usr/share/${pkgname}
-	install -m644 deploy/go-carbon.conf "${pkgdir}/usr/share/${pkgname}/${pkgname}.conf"
+	install -m644 go-carbon.conf.example "${pkgdir}/usr/share/${pkgname}/${pkgname}.conf"
 }
