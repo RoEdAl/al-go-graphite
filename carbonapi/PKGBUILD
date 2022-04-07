@@ -3,7 +3,7 @@
 # Based on: https://aur.archlinux.org/packages/carbonapi
 
 pkgname=carbonapi
-pkgver=0.15.3
+pkgver=0.15.4
 pkgrel=1
 pkgdesc='CarbonAPI - replacement for graphite-web written in Go'
 arch=(i686 x86_64 armv6h armv7h aarch64)
@@ -15,12 +15,12 @@ backup=(
 	"etc/${pkgname}.yaml"
 )
 source=(
-	"${pkgname}-${pkgver}.tar.gz::http://github.com/go-graphite/carbonapi/archive/${pkgver}.tar.gz"
+	"${pkgname}-${pkgver}.tar.gz::http://github.com/go-graphite/carbonapi/archive/v${pkgver}.tar.gz"
 	"${pkgname}.yaml"
 	"${pkgname}.service"
 )
 noextract=("${pkgname}-${pkgver}.tar.gz")
-sha256sums=('380822984f3f9982e415e07f94fc4ca536e0bd1fe4f77f4271a3c3c0ecaca629'
+sha256sums=('aa552abfa9eb44dc25bd40e71c44ffcf67dcb5e04d2c44dd53969d3a5d53e00a'
             '8a87c1016f1ff427e1e0fc8f58162e5e768554750f7265d03d99bc859da4bf0d'
             '22900a057e89b8b36d0af307299439b3c5aa3cdd9ec42efa14cbc2c79140f3e6')
 
